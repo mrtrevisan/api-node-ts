@@ -44,7 +44,7 @@ try
     //hello world page
     server.get('/', async (req : Request, res : Response) => {
         res.status(200).send(
-            `<h3 style="text-align:center">Satis-Pesquisa API</h3>
+            `<h3 style="text-align:center">Api Node</h3>
             <hr/>
             <p style="text-align:center">Read the Docs:
                 <a href="https://${process.env.API_BASE_URL}/api-doc/">/api-doc</a>
