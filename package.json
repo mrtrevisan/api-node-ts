@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "doc-gen": "node doc/swagger-autogen.js",
-    "server": "node dist/server.js",
+    "serve": "node dist/server.js",
     "build": "node esbuild.config.js"
   },
   "dependencies": {
