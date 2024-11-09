@@ -1,0 +1,29 @@
+services:
+  satis-js-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+      args:
+        AMBIENTE: local
+    container_name: satis-js-api
+    restart: unless-stopped
+    networks:
+      - internal
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.satis-js-api.entrypoints=http" 
+      - "traefik.http.routers.satis-js-api.rule=Host(`satis.cloud.local`)"
+      - "traefik.http.middlewares.satis-js-api-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.satis-js-api.middlewares=satis-js-api-https-redirect"
+      - "traefik.http.routers.satis-js-api-secure.rule=Host(`satis.cloud.local`)"
+      - "traefik.http.routers.satis-js-api-secure.entrypoints=https"
+      - "traefik.http.routers.satis-js-api-secure.tls=true"
+      - "traefik.http.services.satis-js-api-secure.loadbalancer.server.port=3000"
+
+networks:
+  traefik-proxy:
+    external: true
+  internal:
+    external: true

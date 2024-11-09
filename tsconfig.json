@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",                   // Specify ECMAScript target version
+    "module": "ES2022",                   // Use ECMAScript module system
+    "moduleResolution": "Node",           // Resolve modules as Node.js does
+    "esModuleInterop": true,              // Enable interop between CommonJS and ES Modules
+    "forceConsistentCasingInFileNames": true,  // Ensure import casing is consistent
+    "strict": true,                       // Enable all strict type-checking options
+    "skipLibCheck": true,                 // Skip checking of declaration files
+    "allowSyntheticDefaultImports": true,  // Allow default imports from modules without default export
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],                // Specify the root folder containing your source code
+  "exclude": ["node_modules", "dist"]     // Exclude folders not to be compiled
+}
