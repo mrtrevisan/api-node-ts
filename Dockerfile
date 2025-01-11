@@ -28,10 +28,6 @@ RUN yarn build
 ######################################
 FROM node:22-alpine
 
-RUN apk update && \
-    apk upgrade && \
-    rm -rf /var/cache/apk/*
-
 USER node
 
 WORKDIR /app
@@ -45,4 +41,4 @@ COPY --chown=node:node --from=builder /app/dist dist
 # Copy doc files
 COPY --chown=node:node doc ./doc
 
-ENTRYPOINT ["yarn", "server"]
+ENTRYPOINT ["yarn", "serve"]

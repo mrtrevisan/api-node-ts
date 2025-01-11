@@ -7,6 +7,8 @@ services:
         AMBIENTE: local
     container_name: api-node
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     networks:
       - internal
       - traefik-proxy

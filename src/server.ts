@@ -26,7 +26,7 @@ try
     //server port
     const port = +(process.env.PORT ?? 3000);
 
-    server.use('/', Controller);
+    server.use('/prefix', Controller);
 
     //serve api-doc endpoint based on auto generated swagger-file
     //if the file does not exist, the program is not terminated but
@@ -40,17 +40,6 @@ try
     {
         logger.warn("Could not find documentation file, /api-doc not available.");
     }
-
-    //hello world page
-    server.get('/', async (req : Request, res : Response) => {
-        res.status(200).send(
-            `<h3 style="text-align:center">Api Node</h3>
-            <hr/>
-            <p style="text-align:center">Read the Docs:
-                <a href="https://${process.env.API_BASE_URL}/api-doc/">/api-doc</a>
-            </p>`
-        );
-    })
 
     //not found page
     server.all('*', async (req : Request, res : Response) => { 
