@@ -1,17 +1,14 @@
 ## API Node Typescript
 
-Typescript/Node API for CRUD backend.
+Typescript (Node) API for web applications.
 
 Uses esbuild to copile Typescript source code into one Javascript bundled file.
 
 ### Dependencies
-1. Node 22
-2. Yarn (optional)
-3. Docker (optional) 
+1. Docker 
 
 ### How to Use
 
-Using docker:
 1. Create ```local.env``` file at /etc/config/
 ```
 cp ./etc/config/.env_example ./etc/config/local.env 
@@ -24,18 +21,6 @@ cp ./etc/config/.env_example ./etc/config/local.env
 docker compose up --build 
 ```
 
-Without docker:
-
-1. Create ```.env``` file at root directory;
-
-2. Set env vars;
-
-3. Run:
-```
-yarn install
-yarn build
-yarn serve
-```
 ### File Structure
 
 ```
