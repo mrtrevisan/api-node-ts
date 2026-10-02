@@ -1,44 +1,26 @@
-FROM node:22-alpine AS installer
-# Create app directory
-WORKDIR /app
-# Install app dependencies
-COPY package*.json ./
-COPY yarn.lock ./
-RUN yarn
-
-###################################
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
-COPY --chown=node:node --from=installer /app/node_modules ./node_modules
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-#Copy project files
-COPY package*.json ./
-COPY yarn.lock ./
+COPY tsconfig.json esbuild.config.js ./
+COPY src ./src
 
-#Copy build files
-COPY tsconfig.json ./
-COPY esbuild.config.js ./
-
-#Copy source directory
-COPY --chown=node:node src ./src
-
-RUN yarn build
+RUN yarn typecheck && yarn build
 
 ######################################
-FROM node:22-alpine
-
-USER node
-
+FROM node:24-alpine
+ENV NODE_ENV=production
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production && yarn cache clean
 
-COPY --chown=node:node --from=installer /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
 
-COPY --chown=node:node --from=builder /app/dist dist 
+USER node
+EXPOSE 3000
 
-# Copy doc files
-COPY --chown=node:node doc ./doc
-
-ENTRYPOINT ["yarn", "serve"]
+# apply pending migrations, then replace the shell with the API process so it receives SIGTERM
+CMD ["sh", "-c", "node --enable-source-maps dist/migrate.js && exec node --enable-source-maps dist/main.js"]
