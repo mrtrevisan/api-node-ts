@@ -10,11 +10,16 @@ export const authenticate: RequestHandler = (req, res, next) => {
         throw new HttpError(401, 'token not found');
     }
 
+    let userId: number;
     try {
-        res.locals.user = jwt.verify(token, config.jwtSecret);
+        userId = Number(jwt.verify(token, config.jwtSecret).sub);
     } catch {
         throw new HttpError(403, 'invalid token');
     }
+    if (!Number.isInteger(userId)) throw new HttpError(403, 'invalid token');
+
+    // the token subject is the id of the logged-in user
+    res.locals.userId = userId;
 
     next();
 };

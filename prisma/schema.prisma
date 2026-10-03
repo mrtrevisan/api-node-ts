@@ -1,0 +1,44 @@
+// Prisma schema: models (the source of truth for queries) and generated client.
+// The connection URL lives in prisma.config.ts (Prisma 7 no longer reads it from here).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma" // generated on build, not versioned
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+  links        Link[]
+
+  @@map("users")
+}
+
+model Link {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  code      String   @unique @db.VarChar(16)
+  url       String   @db.VarChar(2048)
+  userId    Int      @map("user_id") @db.UnsignedInt
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clicks    Click[]
+
+  @@map("links")
+}
+
+// one row per redirect
+model Click {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  linkId    Int      @map("link_id") @db.UnsignedInt
+  createdAt DateTime @default(now()) @map("created_at")
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId, createdAt])
+  @@map("clicks")
+}

@@ -1,9 +1,9 @@
 services:
-  api-node:
+  local-myurl:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: api-node
+    container_name: local-myurl
     restart: unless-stopped
     env_file: etc/config/local.env
     ports:
@@ -14,14 +14,14 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-proxy"
-      - "traefik.http.routers.api-node.entrypoints=http" 
-      - "traefik.http.routers.api-node.rule=Host(`api-node.cloud.local`)"
-      - "traefik.http.middlewares.api-node-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.api-node.middlewares=api-node-https-redirect"
-      - "traefik.http.routers.api-node-secure.rule=Host(`api-node.cloud.local`)"
-      - "traefik.http.routers.api-node-secure.entrypoints=https"
-      - "traefik.http.routers.api-node-secure.tls=true"
-      - "traefik.http.services.api-node-secure.loadbalancer.server.port=3000"
+      - "traefik.http.routers.myurl.entrypoints=http"
+      - "traefik.http.routers.myurl.rule=Host(`myurl.cloud.local`)"
+      - "traefik.http.middlewares.myurl-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.myurl.middlewares=myurl-https-redirect"
+      - "traefik.http.routers.myurl-secure.rule=Host(`myurl.cloud.local`)"
+      - "traefik.http.routers.myurl-secure.entrypoints=https"
+      - "traefik.http.routers.myurl-secure.tls=true"
+      - "traefik.http.services.myurl.loadbalancer.server.port=3000"
 
 networks:
   traefik-proxy:

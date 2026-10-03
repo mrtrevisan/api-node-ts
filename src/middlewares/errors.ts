@@ -13,7 +13,10 @@ export const notFound: RequestHandler = (req) => {
 
 // Express 5 forwards rejected async handlers here, so routes need no try/catch
 export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
-    const status = error instanceof HttpError ? error.status : 500;
+    // body-parser errors (e.g. malformed JSON) carry their own 4xx status
+    const status = error instanceof HttpError ? error.status
+        : error?.expose && error.status < 500 ? error.status
+        : 500;
 
     // pino-http logs res.err in the request line, keeping one log entry per request
     if (status === 500) {

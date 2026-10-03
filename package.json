@@ -1,5 +1,5 @@
 {
-  "name": "api-node-ts",
+  "name": "myurl",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -7,26 +7,31 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "node esbuild.config.js",
-    "typecheck": "tsc --noEmit",
+    "generate": "prisma generate",
+    "build": "yarn -s generate && node esbuild.config.js",
+    "typecheck": "yarn -s generate && tsc --noEmit",
     "serve": "node --enable-source-maps dist/main.js",
     "migrate": "node --enable-source-maps dist/migrate.js",
     "start:local": "yarn build && node --enable-source-maps --env-file=etc/config/local.env dist/main.js",
-    "migrate:local": "yarn build && node --enable-source-maps --env-file=etc/config/local.env dist/migrate.js"
+    "migrate:local": "yarn build && node --enable-source-maps --env-file=etc/config/local.env dist/migrate.js",
+    "migrate:dev": "node --env-file=etc/config/local.env node_modules/prisma/build/index.js migrate dev"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
-    "knex": "^3.3.0",
-    "mysql2": "^3.24.5",
     "pino": "^10.3.1",
-    "pino-http": "^11.0.0"
+    "pino-http": "^11.0.0",
+    "prisma": "^7.10.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.19.1",
+    "@types/swagger-ui-express": "^4.1.8",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   }

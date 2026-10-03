@@ -3,7 +3,7 @@ import pino from 'pino';
 // reads the env directly (not infra/config) so configuration errors can also be logged as JSON
 export const logger = pino({
     level: process.env.LOG_LEVEL ?? 'info',
-    base: { service: process.env.SERVICE_NAME ?? 'api-node' },
+    base: { service: process.env.SERVICE_NAME ?? 'myurl' },
     timestamp: pino.stdTimeFunctions.isoTime,
     formatters: {
         level: (label) => ({ level: label }),
