@@ -76,7 +76,6 @@ src
 +-- docs/openapi.ts     // OpenAPI spec served by Swagger UI at /docs
 +-- database
 |   +-- db.ts           // shared Prisma Client (MariaDB driver adapter, compatible with MySQL)
-|   +-- migrate.ts      // migration runner (deploy | status)
 +-- generated/prisma    // Prisma Client generated from the schema (not versioned)
 +-- infra
     +-- config.ts       // environment loading and validation
@@ -93,7 +92,7 @@ Every log line is JSON on stdout ([pino](https://getpino.io)), ready to be colle
 
 - one line per HTTP request ([pino-http](https://github.com/pinojs/pino-http)) with `req.id`, method, url, status and `responseTime`; `info` for 2xx/3xx, `warn` for 4xx, `error` for 5xx (with the serialized `err`);
 - the request id comes from the `X-Request-Id` header (or is generated) and is returned in the response, so requests can be correlated across services;
-- startup, shutdown, migrations and fatal errors (`uncaughtException` / `unhandledRejection`) use the same logger;
+- startup, shutdown and fatal errors (`uncaughtException` / `unhandledRejection`) use the same logger;
 - the `Authorization` and `Cookie` headers are redacted.
 
 Variables: `LOG_LEVEL` (default `info`) and `SERVICE_NAME` (default `myurl`). For human-readable output locally: `yarn start:local | npx pino-pretty`.
@@ -102,23 +101,24 @@ Variables: `LOG_LEVEL` (default `info`) and `SERVICE_NAME` (default `myurl`). Fo
 
 Uses [Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate). `prisma/schema.prisma` is the source of truth: migrations are plain SQL files generated from changes to it, and applied migrations are tracked in the `_prisma_migrations` table. Unlike Knex/Phinx there are no `down` migrations; to revert, write a new migration.
 
-The container runs `dist/migrate.js` (`prisma migrate deploy`) before starting the API; if a migration fails, the API does not start. The runner retries the connection while MySQL is starting and relays the Prisma CLI output as JSON log lines.
+The container runs `prisma migrate deploy` before starting the API; if a migration fails (or MySQL is not ready yet), the API does not start and the container exits, so Docker restarts it (`restart: unless-stopped`) until the database is reachable. The Prisma CLI output is plain text, not JSON.
 
 To add a migration:
 1. Change `prisma/schema.prisma`;
 2. Run `yarn migrate:dev --name <name>`: it creates `prisma/migrations/<timestamp>_<name>/migration.sql`, applies it and regenerates the client. It needs a reachable database and an empty shadow database (`DB_SHADOW_NAME`, with privileges for `DB_USER`) to detect drift.
 
-Run manually: `yarn migrate:local [deploy|status]`, or inside the container `docker exec local-myurl node dist/migrate.js status`.
+Run manually: `yarn migrate:local`, or inside the container `docker exec local-myurl node node_modules/prisma/build/index.js migrate status`.
 
 ### Scripts
 
 | Script | Description |
 |---|---|
 | `yarn generate` | generates the Prisma Client into `src/generated/prisma` |
-| `yarn build` | generates the client and bundles `src/main.ts` and `src/database/migrate.ts` into `dist/` |
+| `yarn build` | generates the client and bundles `src/main.ts` into `dist/` |
 | `yarn typecheck` | generates the client and type-checks with `tsc --noEmit` |
 | `yarn serve` | runs `dist/main.js` (env from the process) |
-| `yarn migrate` | runs `dist/migrate.js` (env from the process) |
+| `yarn migrate` | applies pending migrations (`prisma migrate deploy`, env from the process) |
+| `yarn migrate:status` | lists applied and pending migrations (`prisma migrate status`, env from the process) |
 | `yarn start:local` | builds and runs with `etc/config/local.env` |
-| `yarn migrate:local` | builds and runs migrations with `etc/config/local.env` |
+| `yarn migrate:local` | applies pending migrations with `etc/config/local.env` |
 | `yarn migrate:dev` | creates and applies a new migration from the schema (`prisma migrate dev`) |

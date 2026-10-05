@@ -11,9 +11,10 @@
     "build": "yarn -s generate && node esbuild.config.js",
     "typecheck": "yarn -s generate && tsc --noEmit",
     "serve": "node --enable-source-maps dist/main.js",
-    "migrate": "node --enable-source-maps dist/migrate.js",
+    "migrate": "prisma migrate deploy",
+    "migrate:status": "prisma migrate status",
     "start:local": "yarn build && node --enable-source-maps --env-file=etc/config/local.env dist/main.js",
-    "migrate:local": "yarn build && node --enable-source-maps --env-file=etc/config/local.env dist/migrate.js",
+    "migrate:local": "node --env-file=etc/config/local.env node_modules/prisma/build/index.js migrate deploy",
     "migrate:dev": "node --env-file=etc/config/local.env node_modules/prisma/build/index.js migrate dev"
   },
   "dependencies": {

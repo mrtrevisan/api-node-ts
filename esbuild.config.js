@@ -4,11 +4,7 @@ import { createRequire } from "module";
 const { dependencies } = createRequire(import.meta.url)("./package.json");
 
 await build({
-    // migrate keeps a flat output name: dist/migrate.js
-    entryPoints: [
-        { in: 'src/main.ts', out: 'main' },
-        { in: 'src/database/migrate.ts', out: 'migrate' },
-    ],
+    entryPoints: ['src/main.ts'],
     platform: 'node',
     format: 'esm',
     target: ['node24'],

@@ -23,12 +23,19 @@ async function verifyPassword(password: string, stored: string) {
     return timingSafeEqual(actual, expected);
 }
 
-function validateCredentials(email: unknown, password: unknown) {
-    if (typeof email !== 'string' || !email.includes('@')) throw new HttpError(400, 'email is invalid');
+// WHATWG `input type=email` rule, but the domain must have a TLD (rejects `user@localhost`)
+const EMAIL_PATTERN =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+// RFC 5321 path limit
+const EMAIL_MAX_LENGTH = 254;
+
+function validateCredentials(emailInput: unknown, password: unknown) {
+    const email = typeof emailInput === 'string' ? emailInput.trim() : '';
+    if (email.length > EMAIL_MAX_LENGTH || !EMAIL_PATTERN.test(email)) throw new HttpError(400, 'email is invalid');
     if (typeof password !== 'string' || password.length < 8) {
         throw new HttpError(400, 'password must have at least 8 characters');
     }
-    return { email: email.trim().toLowerCase(), password };
+    return { email: email.toLowerCase(), password };
 }
 
 export async function register(emailInput: unknown, passwordInput: unknown) {

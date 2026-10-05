@@ -13,6 +13,8 @@ RUN yarn typecheck && yarn build
 ######################################
 FROM node:24-alpine
 ENV NODE_ENV=production
+# keeps the Prisma CLI from checking for updates on every container start
+ENV CHECKPOINT_DISABLE=1
 WORKDIR /app
 
 COPY package.json yarn.lock ./
@@ -27,4 +29,4 @@ USER node
 EXPOSE 3000
 
 # apply pending migrations, then replace the shell with the API process so it receives SIGTERM
-CMD ["sh", "-c", "node --enable-source-maps dist/migrate.js && exec node --enable-source-maps dist/main.js"]
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && exec node --enable-source-maps dist/main.js"]
