@@ -10,7 +10,8 @@
     "generate": "prisma generate",
     "build": "yarn -s generate && node esbuild.config.js",
     "typecheck": "yarn -s generate && tsc --noEmit",
-    "format": "prettier --write src prisma.config.ts esbuild.config.js",
+    "lint": "yarn -s generate && eslint .",
+    "format": "prettier --write src prisma.config.ts esbuild.config.js eslint.config.js",
     "serve": "node --enable-source-maps dist/main.js",
     "migrate": "prisma migrate deploy",
     "migrate:status": "prisma migrate status",
@@ -30,12 +31,17 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.19.1",
     "@types/swagger-ui-express": "^4.1.8",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.9",
-    "typescript": "^7.0.2"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.71.1"
   }
 }
