@@ -15,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // before the router, otherwise GET /:code would capture /docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi));
+app.get('/', (_req, res) => res.redirect('/docs'));
 app.use(router);
 
 app.use(notFound);

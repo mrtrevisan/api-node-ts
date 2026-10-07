@@ -1,7 +1,7 @@
-import { build } from "esbuild"
-import { createRequire } from "module";
+import { build } from 'esbuild';
+import { createRequire } from 'module';
 
-const { dependencies } = createRequire(import.meta.url)("./package.json");
+const { dependencies } = createRequire(import.meta.url)('./package.json');
 
 await build({
     entryPoints: ['src/main.ts'],
@@ -13,5 +13,5 @@ await build({
     minify: false,
     sourcemap: true,
     // runtime dependencies stay in node_modules
-    external: Object.keys(dependencies)
-})
+    external: Object.keys(dependencies),
+});

@@ -3,20 +3,26 @@ import jwt from 'jsonwebtoken';
 import { config } from '../infra/config';
 import { HttpError } from './errors';
 
-export const authenticate: RequestHandler = (req, res, next) => {
-    const [scheme, token] = req.headers.authorization?.split(' ') ?? [];
+// the auth scheme is case-insensitive (RFC 9110)
+const BEARER_PATTERN = /^Bearer +(\S+)$/i;
 
-    if (scheme !== 'Bearer' || !token) {
+export const authenticate: RequestHandler = (req, res, next) => {
+    const token = req.headers.authorization?.match(BEARER_PATTERN)?.[1];
+    if (!token) {
         throw new HttpError(401, 'token not found');
     }
 
+    // an invalid or expired token is still missing authentication: 401, not 403
     let userId: number;
     try {
-        userId = Number(jwt.verify(token, config.jwtSecret).sub);
+        const payload = jwt.verify(token, config.jwtSecret, { algorithms: ['HS256'] });
+        userId = typeof payload === 'string' ? NaN : Number(payload.sub);
     } catch {
-        throw new HttpError(403, 'invalid token');
+        throw new HttpError(401, 'invalid token');
     }
-    if (!Number.isInteger(userId)) throw new HttpError(403, 'invalid token');
+    if (!Number.isInteger(userId)) {
+        throw new HttpError(401, 'invalid token');
+    }
 
     // the token subject is the id of the logged-in user
     res.locals.userId = userId;

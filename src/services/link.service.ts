@@ -5,6 +5,8 @@ import * as linkRepository from '../repositories/link.repository';
 
 const CODE_LENGTH = 7;
 const MAX_ATTEMPTS = 3;
+// size of the links.url column
+const URL_MAX_LENGTH = 2048;
 
 // 7 url-safe chars = 64^7 combinations; a collision is rare but possible
 function generateCode() {
@@ -13,6 +15,7 @@ function generateCode() {
 
 function validateUrl(value: unknown): string {
     if (typeof value !== 'string') throw new HttpError(400, 'url is required');
+
     let url: URL;
     try {
         url = new URL(value);
@@ -21,6 +24,10 @@ function validateUrl(value: unknown): string {
     }
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
         throw new HttpError(400, 'url must be http or https');
+    }
+    // checked on the normalized href, which is what gets stored
+    if (url.href.length > URL_MAX_LENGTH) {
+        throw new HttpError(400, `url must have at most ${URL_MAX_LENGTH} characters`);
     }
     return url.href;
 }

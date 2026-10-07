@@ -42,7 +42,10 @@ export const openapi = {
                         description: 'User created',
                         content: {
                             'application/json': {
-                                schema: { type: 'object', properties: { id: { type: 'integer' }, email: { type: 'string' } } },
+                                schema: {
+                                    type: 'object',
+                                    properties: { id: { type: 'integer' }, email: { type: 'string' } },
+                                },
                             },
                         },
                     },
@@ -92,8 +95,7 @@ export const openapi = {
                         content: { 'application/json': { schema: { $ref: '#/components/schemas/Link' } } },
                     },
                     400: error('Invalid URL'),
-                    401: error('Missing token'),
-                    403: error('Invalid token'),
+                    401: error('Missing, invalid or expired token'),
                 },
             },
         },
@@ -123,8 +125,7 @@ export const openapi = {
                             },
                         },
                     },
-                    401: error('Missing token'),
-                    403: error('Invalid token'),
+                    401: error('Missing, invalid or expired token'),
                     404: error('Link not found or owned by another user'),
                 },
             },
