@@ -116,6 +116,7 @@ Run manually: `yarn migrate:local`, or inside the container `docker exec local-m
 | `yarn generate` | generates the Prisma Client into `src/generated/prisma` |
 | `yarn build` | generates the client and bundles `src/main.ts` into `dist/` |
 | `yarn typecheck` | generates the client and type-checks with `tsc --noEmit` |
+| `yarn format` | formats the code with Prettier (rules in `.prettierrc.json`) |
 | `yarn serve` | runs `dist/main.js` (env from the process) |
 | `yarn migrate` | applies pending migrations (`prisma migrate deploy`, env from the process) |
 | `yarn migrate:status` | lists applied and pending migrations (`prisma migrate status`, env from the process) |
