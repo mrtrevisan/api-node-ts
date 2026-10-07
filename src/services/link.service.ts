@@ -14,7 +14,9 @@ function generateCode() {
 }
 
 function validateUrl(value: unknown): string {
-    if (typeof value !== 'string') throw new HttpError(400, 'url is required');
+    if (typeof value !== 'string') {
+        throw new HttpError(400, 'url is required');
+    }
 
     let url: URL;
     try {
@@ -41,20 +43,26 @@ export async function shorten(value: unknown, userId: number) {
             return await linkRepository.create(generateCode(), url, userId);
         } catch (error) {
             const collision = error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
-            if (!collision || attempt === MAX_ATTEMPTS) throw error;
+            if (!collision || attempt === MAX_ATTEMPTS) {
+                throw error;
+            }
         }
     }
 }
 
 export async function resolve(code: string) {
     const link = await linkRepository.findByCode(code);
-    if (!link) throw new HttpError(404, 'link not found');
+    if (!link) {
+        throw new HttpError(404, 'link not found');
+    }
     await linkRepository.addClick(link.id);
     return link.url;
 }
 
 export async function stats(code: string, userId: number) {
     const link = await linkRepository.findOwnedWithClickCount(code, userId);
-    if (!link) throw new HttpError(404, 'link not found');
+    if (!link) {
+        throw new HttpError(404, 'link not found');
+    }
     return { code: link.code, url: link.url, createdAt: link.createdAt, clicks: link._count.clicks };
 }

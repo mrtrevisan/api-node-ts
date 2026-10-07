@@ -3,6 +3,13 @@ import jwt from 'jsonwebtoken';
 import { config } from '../infra/config';
 import { HttpError } from './errors';
 
+declare module 'express-serve-static-core' {
+    interface Locals {
+        // set by authenticate; only read on routes that use it
+        userId: number;
+    }
+}
+
 // the auth scheme is case-insensitive (RFC 9110)
 const BEARER_PATTERN = /^Bearer +(\S+)$/i;
 

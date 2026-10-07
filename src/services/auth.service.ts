@@ -25,7 +25,9 @@ async function hashPassword(password: string) {
 
 async function verifyPassword(password: string, stored: string) {
     const [salt, hash] = stored.split(':');
-    if (!salt || !hash) return false;
+    if (!salt || !hash) {
+        return false;
+    }
     const expected = Buffer.from(hash, 'hex');
     const actual = await scryptAsync(password, Buffer.from(salt, 'hex'), expected.length);
     return timingSafeEqual(actual, expected);

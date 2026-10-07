@@ -9,9 +9,8 @@ const server = app.listen(config.port, () => {
 
 function shutdown(signal: string) {
     logger.info({ signal }, 'shutting down');
-    server.close(async () => {
-        await prisma.$disconnect();
-        process.exit(0);
+    server.close(() => {
+        void prisma.$disconnect().then(() => process.exit(0));
     });
 }
 

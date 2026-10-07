@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { pinoHttp } from 'pino-http';
+import { pinoHttp, type StdSerializedResults } from 'pino-http';
 import { logger } from '../infra/logger';
 
 // one JSON line per request; the id is propagated from X-Request-Id or generated
@@ -13,17 +13,21 @@ export const requestLogger = pinoHttp({
     },
     // keep only what is useful to filter and correlate; full headers are noise
     serializers: {
-        req: (req) => ({
+        req: (req: StdSerializedResults['req']) => ({
             id: req.id,
             method: req.method,
             url: req.url,
             userAgent: req.headers['user-agent'],
         }),
-        res: (res) => ({ statusCode: res.statusCode }),
+        res: (res: StdSerializedResults['res']) => ({ statusCode: res.statusCode }),
     },
     customLogLevel: (req, res, error) => {
-        if (error || res.statusCode >= 500) return 'error';
-        if (res.statusCode >= 400) return 'warn';
+        if (error || res.statusCode >= 500) {
+            return 'error';
+        }
+        if (res.statusCode >= 400) {
+            return 'warn';
+        }
         return 'info';
     },
 });
