@@ -6,8 +6,6 @@ services:
     container_name: local-myurl
     restart: unless-stopped
     env_file: etc/config/local.env
-    ports:
-      - "3000:3000"
     networks:
       - internal
       - traefik-proxy
