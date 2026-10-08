@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
-import { openapi } from './docs/openapi';
+import openapi from './docs/swagger.json' with { type: 'json' };
 import { errorHandler, notFound } from './middlewares/errors';
 import { requestLogger } from './middlewares/requestLogger';
 import { router } from './routes';

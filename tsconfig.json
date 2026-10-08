@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,       // src/docs/swagger.json
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },

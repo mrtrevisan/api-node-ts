@@ -56,7 +56,7 @@ Without Docker: `yarn install && yarn start:local`.
 
 Passwords (8+ characters) are stored as scrypt hashes with a random salt. The token is signed with `JWT_SECRET_KEY` (HS256) and its `sub` is the user id.
 
-Interactive docs (Swagger UI) at `/docs`, e.g. https://myurl.cloud.local/docs. The OpenAPI spec is written by hand in `src/docs/openapi.ts`; keep it in sync with `src/routes.ts`.
+Interactive docs (Swagger UI) at `/docs`, e.g. https://myurl.cloud.local/docs. The OpenAPI spec is written by hand in `src/docs/swagger.json` (bundled by esbuild); keep it in sync with `src/routes.ts`.
 
 Errors are returned as `{ "message": string, "code": number }`.
 
@@ -73,7 +73,7 @@ src
 +-- services            // business rules (today they only delegate to repositories)
 +-- repositories        // database queries with the Prisma Client
 +-- middlewares         // authentication (JWT), request logging and error handling
-+-- docs/openapi.ts     // OpenAPI spec served by Swagger UI at /docs
++-- docs/swagger.json   // OpenAPI spec served by Swagger UI at /docs
 +-- database
 |   +-- db.ts           // shared Prisma Client (MariaDB driver adapter, compatible with MySQL)
 +-- generated/prisma    // Prisma Client generated from the schema (not versioned)
